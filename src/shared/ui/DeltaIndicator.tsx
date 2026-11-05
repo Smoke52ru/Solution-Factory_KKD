@@ -19,6 +19,11 @@ interface DeltaIndicatorProps {
   /** Идентификатор прогона, с которым сравниваем, например `RUN-007`. */
   comparedToId?: string | null
   size?: 'default' | 'large'
+  /**
+   * Показывать слово оценки («лучше / хуже») рядом с числом. Отключается там, где оценка уже
+   * написана рядом (вердикт); `aria-label` при этом остаётся полным.
+   */
+  showTrendLabel?: boolean
 }
 
 function trendLabel(trend: Trend): string {
@@ -78,6 +83,7 @@ export function DeltaIndicator({
   unit,
   comparedToId,
   size = 'default',
+  showTrendLabel = true,
 }: DeltaIndicatorProps) {
   const { token } = theme.useToken()
   const color = useTrendColor(trend)
@@ -116,7 +122,7 @@ export function DeltaIndicator({
         {deltaText}
         {pctText === null ? null : <span style={{ fontWeight: FONT_WEIGHT_REGULAR }}>({pctText})</span>}
       </span>
-      {label === null ? null : (
+      {label === null || !showTrendLabel ? null : (
         <span aria-hidden style={{ fontWeight: FONT_WEIGHT_REGULAR }}>
           {label}
         </span>

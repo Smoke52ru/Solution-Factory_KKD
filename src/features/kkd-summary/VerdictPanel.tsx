@@ -76,6 +76,7 @@ export function VerdictPanel({ metric, comparedToId, counters }: VerdictPanelPro
                 unit={metric.unit}
                 comparedToId={comparedToId}
                 size="large"
+                showTrendLabel={false}
               />
               {metric.previous === null ? null : (
                 <span style={{ color: token.colorTextSecondary }}>

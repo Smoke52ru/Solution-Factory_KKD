@@ -148,4 +148,25 @@ describe('DeltaIndicator', () => {
       expect(screen.getByRole('img')).not.toHaveTextContent('(')
     })
   })
+
+  describe('showTrendLabel = false', () => {
+    it('скрывает слово оценки на экране, но aria-label остаётся полным', () => {
+      render(
+        <DeltaIndicator
+          delta={-4.3}
+          previous={80}
+          trend="worse"
+          unit="%"
+          comparedToId="RUN-007"
+          showTrendLabel={false}
+        />,
+      )
+
+      const indicator = screen.getByRole('img', {
+        name: 'Снизилось на 4,3\u00A0п.п. относительно RUN-007 — хуже',
+      })
+      expect(indicator).toHaveTextContent('\u22124,3')
+      expect(indicator).not.toHaveTextContent('хуже')
+    })
+  })
 })
