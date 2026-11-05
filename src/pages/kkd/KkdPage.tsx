@@ -19,7 +19,9 @@ export function KkdPage() {
   const { runsQuery, run, unavailableRun, lastCompletedRun } = useActiveRun(kkd.runId)
 
   // Для прогона без результатов (ошибка / выполняется) запросы сводки и проблем не делаем.
-  const dataRunId = unavailableRun ? undefined : kkd.runId
+  // Статус прогона известен только из списка прогонов, поэтому до его загрузки не запрашиваем
+  // ничего и для явного `run` из URL — иначе по ссылке на неуспешный прогон уйдёт лишний запрос.
+  const dataRunId = runsQuery.isSuccess && !unavailableRun ? kkd.runId : undefined
   const hasNoRuns = runsQuery.isSuccess && kkd.runId === undefined
 
   const selectStatus = (status: DeltaStatus | undefined) => {
