@@ -37,6 +37,8 @@ npm run dev:all    # mock API в Docker + Vite на http://localhost:5173
 | `npm run build` | `tsc -b` и production-сборка в `dist/` |
 | `npm run preview` | Превью сборки |
 | `npm run lint` | Oxlint |
+| `npm test` | Тесты Vitest (jsdom), один прогон |
+| `npm run test:watch` | Vitest в режиме наблюдения |
 
 ### Скрипты mock API
 
@@ -71,6 +73,7 @@ npm run dev:all    # mock API в Docker + Vite на http://localhost:5173
 - **Ant Design 5** — этого требует задание. Актуальная версия antd 6, поэтому проект зафиксирован на 5-й, а для работы с React 19 подключён патч `@ant-design/v5-patch-for-react-19`
 - Тема собрана из токенов UI-кита в [`src/app/theme.ts`](src/app/theme.ts), цвета в компонентах берутся только из темы; шрифт Inter
 - TanStack Query + Axios — загрузка и кеш данных
+- Vitest + Testing Library (jsdom) — тесты, сеть в них не используется
 - React Router — состояние страницы хранится в query-параметрах URL
 - nginx — раздача статики и прокси к API в Docker
 - FastAPI mock API (`backend/`)
@@ -79,22 +82,24 @@ npm run dev:all    # mock API в Docker + Vite на http://localhost:5173
 
 ```text
 .
-├── src/
+├── src/                      # тесты лежат рядом с кодом: *.test.ts(x)
 │   ├── app/                  # App, providers (QueryClient, ConfigProvider), тема
 │   ├── pages/kkd/            # KkdPage — только композиция секций
 │   ├── features/
-│   │   ├── kkd-context/      # выбор подразделения и прогона, useKkdParams
+│   │   ├── kkd-context/      # выбор подразделения и прогона, useKkdParams, RunUnavailable
 │   │   ├── kkd-summary/      # вердикт, карточки метрик, счётчики, «что исправлять»
 │   │   └── kkd-issues/       # фильтры, таблица, карточка проблемы
-│   └── shared/
-│       ├── api/              # клиент, типы, endpoints, queryKeys, хуки, ошибки
-│       ├── ui/               # DeltaIndicator, SeverityTag, DeltaStatusTag, ErrorState
-│       └── lib/              # форматирование чисел и дат
+│   ├── shared/
+│   │   ├── api/              # клиент, типы, endpoints, queryKeys, хуки, ошибки
+│   │   ├── ui/               # DeltaIndicator, SeverityTag, DeltaStatusTag, ErrorState
+│   │   └── lib/              # форматирование чисел и дат
+│   └── test/                 # setup для Vitest (jest-dom, заглушки jsdom), фикстуры
 ├── backend/                  # вендорнутый mock API (FastAPI)
 ├── nginx/                    # шаблон конфигурации nginx для Docker
 ├── specs/                    # спецификация: requirements.md, design.md
 ├── docs/                     # задание, БТ и UI-KIT.md
 ├── scripts/                  # скрипты mock API и dev:all
+├── vite.config.ts            # Vite, алиас @, прокси /api и настройки Vitest
 ├── Dockerfile                # сборка фронтенда + nginx
 └── docker-compose.yml        # backend + frontend
 ```
