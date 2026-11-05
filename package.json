@@ -5,9 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:all": "sh scripts/dev.sh",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend:up": "sh scripts/backend-up.sh",
+    "backend:down": "sh scripts/backend-down.sh",
+    "backend:logs": "sh scripts/backend-logs.sh",
+    "backend:health": "sh scripts/backend-health.sh",
+    "backend:reset": "sh scripts/backend-reset.sh",
+    "backend:local": "sh scripts/backend-local.sh",
+    "backend:test": "sh scripts/backend-test.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.4",
