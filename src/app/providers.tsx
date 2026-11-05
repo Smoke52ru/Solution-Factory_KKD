@@ -3,14 +3,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App as AntApp, ConfigProvider, theme as antdTheme } from 'antd'
 import ruRU from 'antd/locale/ru_RU'
 import { useEffect, type PropsWithChildren } from 'react'
+import { isClientError } from '@/shared/api/errors'
 import { theme } from './theme'
+
+const MAX_RETRIES = 1
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 30_000,
       refetchOnWindowFocus: false,
-      retry: 1,
+      // На 4xx повтор бессмысленен; сетевые сбои и 5xx повторяем один раз.
+      retry: (failureCount, error) => !isClientError(error) && failureCount < MAX_RETRIES,
     },
   },
 })
