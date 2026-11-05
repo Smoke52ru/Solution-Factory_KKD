@@ -2,8 +2,8 @@ import { Layout, Typography, theme as antdTheme } from 'antd'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { KkdPage } from '@/pages/kkd/KkdPage'
 
-const { Header, Content } = Layout
-const { Title } = Typography
+const { Header } = Layout
+const { Text } = Typography
 
 const CONTENT_MAX_WIDTH = 1440
 
@@ -22,11 +22,12 @@ export default function App() {
             borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorBorderSecondary}`,
           }}
         >
-          <Title level={4} style={{ margin: 0 }}>
+          <Text strong style={{ fontSize: token.fontSizeHeading4, lineHeight: token.lineHeightHeading4 }}>
             Solution Factory · ККД
-          </Title>
+          </Text>
         </Header>
-        <Content
+        {/* Не `Layout.Content`: он рендерит `<main>`, а `<main>` задаёт сама страница. */}
+        <div
           style={{
             width: '100%',
             maxWidth: CONTENT_MAX_WIDTH,
@@ -38,7 +39,7 @@ export default function App() {
             <Route path="/" element={<KkdPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </Content>
+        </div>
       </Layout>
     </BrowserRouter>
   )
