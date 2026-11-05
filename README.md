@@ -49,7 +49,7 @@ npm run backend:local
 ## Стек
 
 - React 19 + TypeScript + Vite
-- Ant Design 6 + тема из UI-KIT
+- Ant Design 5 + тема из UI-KIT
 - TanStack Query + Axios
 - React Router
 - FastAPI mock API (backend)
