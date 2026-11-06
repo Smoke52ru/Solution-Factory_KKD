@@ -207,7 +207,7 @@ describe('useKkdParams: страница и модалка', () => {
     expect(result.current.navigationType).toBe('REPLACE')
   })
 
-  it('openIssue добавляет issue через push, closeIssue убирает через replace', () => {
+  it('openIssue добавляет issue через push; closeIssue возвращает назад по истории', () => {
     const { result } = setup('/?unit=B2B&page=2')
 
     act(() => result.current.kkd.openIssue('ISS-42'))
@@ -217,6 +217,17 @@ describe('useKkdParams: страница и модалка', () => {
     expect(result.current.navigationType).toBe('PUSH')
 
     act(() => result.current.kkd.closeIssue())
+    expect(result.current.search.has('issue')).toBe(false)
+    expect(result.current.kkd.issueId).toBeUndefined()
+    expect(result.current.search.get('page')).toBe('2')
+    expect(result.current.navigationType).toBe('POP')
+  })
+
+  it('closeIssue по прямой ссылке убирает issue через replace, без возврата назад', () => {
+    const { result } = setup('/?unit=B2B&page=2&issue=ISS-42')
+
+    act(() => result.current.kkd.closeIssue())
+
     expect(result.current.search.has('issue')).toBe(false)
     expect(result.current.kkd.issueId).toBeUndefined()
     expect(result.current.search.get('page')).toBe('2')

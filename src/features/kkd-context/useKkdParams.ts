@@ -1,7 +1,12 @@
 import { useCallback, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useDefaultRun } from '@/shared/api/hooks'
 import type { DeltaStatus, Severity } from '@/shared/api/types'
+
+/** Метка в `location.state`: карточку открыли внутри приложения, а не по прямой ссылке. */
+interface IssueNavigationState {
+  issueOpenedInApp?: boolean
+}
 
 /** Корень оргструктуры — подразделение по умолчанию. */
 export const DEFAULT_UNIT_ID = 'B2B'
@@ -67,6 +72,8 @@ function writeParam(params: URLSearchParams, key: string, value: string | undefi
  */
 export function useKkdParams() {
   const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
+  const location = useLocation()
   const defaultRun = useDefaultRun()
 
   const unitId = searchParams.get(PARAM.unit) ?? DEFAULT_UNIT_ID
@@ -166,14 +173,27 @@ export function useKkdParams() {
   )
 
   const openIssue = useCallback(
-    (nextIssueId: string) => update((next) => next.set(PARAM.issue, nextIssueId)),
-    [update],
+    (nextIssueId: string) => {
+      setSearchParams(
+        (previous) => {
+          const next = new URLSearchParams(previous)
+          next.set(PARAM.issue, nextIssueId)
+          return next
+        },
+        { state: { issueOpenedInApp: true } satisfies IssueNavigationState },
+      )
+    },
+    [setSearchParams],
   )
 
-  const closeIssue = useCallback(
-    () => update((next) => next.delete(PARAM.issue), { replace: true }),
-    [update],
-  )
+  const closeIssue = useCallback(() => {
+    const state = location.state as IssueNavigationState | null
+    if (state?.issueOpenedInApp) {
+      navigate(-1)
+      return
+    }
+    update((next) => next.delete(PARAM.issue), { replace: true })
+  }, [location.state, navigate, update])
 
   return {
     unitId,
