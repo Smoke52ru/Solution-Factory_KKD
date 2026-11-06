@@ -12,10 +12,17 @@ const metaQueryOptions = queryOptions({
   staleTime: Infinity,
 })
 
+const RUNS_STALE_MS = 60_000
+const RUNS_POLL_MS = 3_000
+
 const runsQueryOptions = queryOptions({
   queryKey: queryKeys.runs(),
   queryFn: async ({ signal }) => (await getRuns({ limit: RUNS_LIMIT }, { signal })).items,
-  staleTime: Infinity,
+  staleTime: RUNS_STALE_MS,
+  refetchInterval: (query) => {
+    const runs = query.state.data
+    return runs?.some((run) => run.status === 'running') ? RUNS_POLL_MS : false
+  },
 })
 
 /** Прогон по умолчанию — первый `completed` (явный id, а не `latest`). */
