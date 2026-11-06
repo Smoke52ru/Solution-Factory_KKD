@@ -42,7 +42,7 @@ export function makeMetric(key: MetricKey, overrides: Partial<MetricRow> = {}): 
 
 export const META: MetaResponse = {
   units: [
-    { id: 'B2B', name: 'Блок B2B', level: 'block', parent_id: null, depth: 0 },
+    { id: 'B2B', name: 'Корпоративный блок', level: 'block', parent_id: null, depth: 0 },
     { id: 'TX-NEW', name: 'Новый отдел', level: 'unit', parent_id: 'B2B', depth: 1 },
   ],
   rules: [
@@ -77,10 +77,10 @@ export function makeSummary(overrides: Partial<SummaryResponse> = {}): SummaryRe
     compared_to: makeRun({ id: 'RUN-007', number: 7, snapshot_date: '2026-10-19' }),
     unit: {
       id: 'B2B',
-      name: 'Блок B2B',
+      name: 'Корпоративный блок',
       level: 'block',
       parent_id: null,
-      path: [{ id: 'B2B', name: 'Блок B2B' }],
+      path: [{ id: 'B2B', name: 'Корпоративный блок' }],
     },
     metrics: [
       makeMetric('clean_goals_share', { title: 'Доля корректных целей' }),
@@ -107,7 +107,7 @@ export function makeIssue(overrides: Partial<Issue> = {}): Issue {
     kr_id: null,
     kr_title: null,
     unit_id: 'B2B',
-    unit_name: 'Блок B2B',
+    unit_name: 'Корпоративный блок',
     owner: null,
     details: 'details',
     actual: null,

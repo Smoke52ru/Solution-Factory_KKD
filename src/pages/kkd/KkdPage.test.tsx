@@ -160,7 +160,7 @@ describe('KkdPage: подразделение без целей (TX-NEW)', () =>
           level: 'unit',
           parent_id: 'B2B',
           path: [
-            { id: 'B2B', name: 'Блок B2B' },
+            { id: 'B2B', name: 'Корпоративный блок' },
             { id: 'TX-NEW', name: 'Новый отдел' },
           ],
         },
@@ -232,5 +232,36 @@ describe('KkdPage: неуспешный прогон (RUN-006)', () => {
     expect(await screen.findByText('Прогон RUN-009 ещё выполняется')).toBeInTheDocument()
     expect(getSummary).not.toHaveBeenCalled()
     expect(getIssues).not.toHaveBeenCalled()
+  })
+})
+
+describe('KkdPage: неизвестные параметры URL', () => {
+  beforeEach(() => {
+    mockRuns(makeRun())
+    vi.mocked(getSummary).mockResolvedValue(makeSummary())
+    vi.mocked(getIssues).mockResolvedValue(makeIssues([]))
+  })
+
+  it('неизвестный unit: один Result и кнопка к Корпоративному блоку, без запросов сводки и проблем', async () => {
+    renderPage('/?unit=NOPE')
+
+    expect(await screen.findByText('Подразделение NOPE не найдено')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Открыть Корпоративный блок' })).toBeInTheDocument()
+    expect(screen.queryByText(/Прогон .+ не найден/)).not.toBeInTheDocument()
+    expect(getSummary).not.toHaveBeenCalled()
+    expect(getIssues).not.toHaveBeenCalled()
+    expect(screen.queryByRole('heading', { name: 'Сводка' })).not.toBeInTheDocument()
+  })
+
+  it('неизвестный run: один Result с кнопкой к последнему успешному, без запросов данных', async () => {
+    renderPage('/?run=RUN-999')
+
+    expect(await screen.findByText('Прогон RUN-999 не найден')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Открыть последний успешный прогон' }),
+    ).toBeInTheDocument()
+    expect(getSummary).not.toHaveBeenCalled()
+    expect(getIssues).not.toHaveBeenCalled()
+    expect(screen.queryByRole('heading', { name: 'Сводка' })).not.toBeInTheDocument()
   })
 })

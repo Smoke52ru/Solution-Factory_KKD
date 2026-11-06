@@ -1,11 +1,12 @@
-import { Empty, theme } from 'antd'
+import { Button, Empty, Result, theme } from 'antd'
 import { ContextBar } from '@/features/kkd-context/ContextBar'
-import { RunUnavailable } from '@/features/kkd-context/RunUnavailable'
+import { MissingRun, RunUnavailable } from '@/features/kkd-context/RunUnavailable'
 import { useActiveRun } from '@/features/kkd-context/useActiveRun'
-import { useKkdParams } from '@/features/kkd-context/useKkdParams'
+import { DEFAULT_UNIT_ID, useKkdParams } from '@/features/kkd-context/useKkdParams'
 import { IssuesSection } from '@/features/kkd-issues/IssuesSection'
 import { scrollToIssues } from '@/features/kkd-issues/scrollToIssues'
 import { SummarySection } from '@/features/kkd-summary/SummarySection'
+import { useMeta } from '@/shared/api/hooks'
 import type { DeltaStatus } from '@/shared/api/types'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { SectionTitle } from '@/shared/ui/SectionTitle'
@@ -16,12 +17,19 @@ const PAGE_TITLE_ID = 'kkd-page-title'
 export function KkdPage() {
   const { token } = theme.useToken()
   const kkd = useKkdParams()
-  const { runsQuery, run, unavailableRun, lastCompletedRun } = useActiveRun(kkd.runId)
+  const meta = useMeta()
+  const { runsQuery, run, unavailableRun, missingRun, lastCompletedRun } = useActiveRun(kkd.runId)
 
-  // Для прогона без результатов (ошибка / выполняется) запросы сводки и проблем не делаем.
-  // Статус прогона известен только из списка прогонов, поэтому до его загрузки не запрашиваем
-  // ничего и для явного `run` из URL — иначе по ссылке на неуспешный прогон уйдёт лишний запрос.
-  const dataRunId = runsQuery.isSuccess && !unavailableRun ? kkd.runId : undefined
+  const unknownUnit =
+    meta.isSuccess && !meta.data.units.some((unit) => unit.id === kkd.unitId)
+  const defaultUnit = meta.data?.units.find((unit) => unit.id === DEFAULT_UNIT_ID)
+
+  // Для прогона без результатов (ошибка / выполняется) и неизвестных unit/run
+  // запросы сводки и проблем не делаем. Статус прогона известен только из списка
+  // прогонов, поэтому до его загрузки не запрашиваем ничего и для явного `run`
+  // из URL — иначе по ссылке на неуспешный прогон уйдёт лишний запрос.
+  const dataRunId =
+    runsQuery.isSuccess && !unavailableRun && !missingRun && !unknownUnit ? kkd.runId : undefined
   const hasNoRuns = runsQuery.isSuccess && kkd.runId === undefined
 
   const selectStatus = (status: DeltaStatus | undefined) => {
@@ -44,7 +52,31 @@ export function KkdPage() {
         />
       )
     }
+    if (unknownUnit) {
+      return (
+        <Result
+          status="warning"
+          title={`Подразделение ${kkd.unitId} не найдено`}
+          extra={
+            defaultUnit === undefined ? undefined : (
+              <Button type="primary" onClick={() => kkd.setUnit(defaultUnit.id)}>
+                Открыть {defaultUnit.name}
+              </Button>
+            )
+          }
+        />
+      )
+    }
     if (hasNoRuns) return <Empty description="Завершённых прогонов пока нет" />
+    if (missingRun && kkd.runId !== undefined) {
+      return (
+        <MissingRun
+          runId={kkd.runId}
+          lastCompletedRun={lastCompletedRun}
+          onOpenRun={kkd.setRun}
+        />
+      )
+    }
     if (unavailableRun) {
       return (
         <RunUnavailable
