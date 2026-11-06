@@ -1,6 +1,7 @@
 import { Empty, Skeleton, theme } from 'antd'
 import { useSummary } from '@/shared/api/hooks'
-import type { DeltaStatus, MetricRow, SummaryResponse } from '@/shared/api/types'
+import type { DeltaStatus, SummaryResponse } from '@/shared/api/types'
+import { hasNoGoals } from '@/shared/lib/summary'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { SectionTitle } from '@/shared/ui/SectionTitle'
 import { SlowLoadingHint } from '@/shared/ui/SlowLoadingHint'
@@ -11,7 +12,6 @@ import { VerdictPanel } from './VerdictPanel'
 
 const HEADING_ID = 'kkd-summary-heading'
 const VERDICT_METRIC_KEY = 'clean_goals_share'
-const GOALS_ACTIVE_KEY = 'goals_active'
 const METRIC_CARD_MIN_WIDTH = 220
 const SKELETON_CARDS = 4
 
@@ -22,13 +22,6 @@ interface SummarySectionProps {
   activeRuleCodes: readonly string[]
   onSelectStatus: (status: DeltaStatus | undefined) => void
   onSelectRule: (ruleCode: string) => void
-}
-
-/** В подразделении нет целей (TX-NEW): метрики `null` или активных целей 0. */
-function hasNoGoals(metrics: readonly MetricRow[]): boolean {
-  const goalsActive = metrics.find((metric) => metric.key === GOALS_ACTIVE_KEY)
-  const verdict = metrics.find((metric) => metric.key === VERDICT_METRIC_KEY)
-  return goalsActive?.value === 0 || (verdict !== undefined && verdict.value === null)
 }
 
 function SummaryContent({
@@ -45,14 +38,14 @@ function SummaryContent({
 >) {
   const { token } = theme.useToken()
   const comparedToId = summary.compared_to?.id ?? null
-  const noData = hasNoGoals(summary.metrics)
+  const noGoals = hasNoGoals(summary)
   const verdictMetric = summary.metrics.find((metric) => metric.key === VERDICT_METRIC_KEY)
   const otherMetrics = summary.metrics.filter((metric) => metric.key !== VERDICT_METRIC_KEY)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: token.margin }}>
-      {noData ? (
-        <Empty description="В подразделении пока нет целей" />
+      {noGoals ? (
+        <Empty description="В подразделении пока нет целей — проверять нечего" />
       ) : verdictMetric ? (
         <VerdictPanel
           metric={verdictMetric}
@@ -75,11 +68,11 @@ function SummaryContent({
         }}
       >
         {otherMetrics.map((metric) => (
-          <MetricCard key={metric.key} metric={metric} comparedToId={comparedToId} noData={noData} />
+          <MetricCard key={metric.key} metric={metric} comparedToId={comparedToId} />
         ))}
       </div>
 
-      {noData ? null : (
+      {noGoals ? null : (
         <IssuesBreakdown
           severityRows={summary.issues_by_severity}
           ruleRows={summary.issues_by_rule}

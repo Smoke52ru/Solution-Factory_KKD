@@ -2,8 +2,9 @@ import { theme } from 'antd'
 import { useEffect, useMemo } from 'react'
 import type { KkdFilters, KkdFiltersPatch } from '@/features/kkd-context/useKkdParams'
 import { PAGE_SIZE } from '@/features/kkd-context/useKkdParams'
-import { useIssues } from '@/shared/api/hooks'
+import { useIssues, useSummary } from '@/shared/api/hooks'
 import type { IssuesQuery } from '@/shared/api/types'
+import { hasNoGoals } from '@/shared/lib/summary'
 import { SectionTitle } from '@/shared/ui/SectionTitle'
 import { IssueModal } from './IssueModal'
 import { IssuesFilters } from './IssuesFilters'
@@ -66,6 +67,8 @@ export function IssuesSection({
     [runId, unitId, ruleCodes, severities, deltaStatus, q, page],
   )
   const issues = useIssues(query)
+  const summary = useSummary(runId, unitId)
+  const noGoals = summary.data !== undefined && hasNoGoals(summary.data)
 
   const total = issues.data?.total
   const hasActiveFilters =
@@ -98,6 +101,7 @@ export function IssuesSection({
         isFetching={issues.isFetching}
         error={issues.error}
         hasActiveFilters={hasActiveFilters}
+        noGoals={noGoals}
         page={page}
         pageSize={PAGE_SIZE}
         onRetry={() => void issues.refetch()}

@@ -189,19 +189,23 @@ describe('KkdPage: подразделение без целей (TX-NEW)', () =>
     vi.mocked(getIssues).mockResolvedValue(makeIssues([]))
   })
 
-  it('показывает Empty «нет целей», прочерки вместо нулей и позитивное пустое состояние таблицы', async () => {
+  it('показывает Empty «нет целей», нули как есть и нейтральное пустое состояние таблицы', async () => {
     renderPage('/?unit=TX-NEW')
 
-    expect(await screen.findByText('В подразделении пока нет целей')).toBeInTheDocument()
+    expect(
+      await screen.findByText('В подразделении пока нет целей — проверять нечего'),
+    ).toBeInTheDocument()
     expect(screen.getByText('Активных целей')).toBeInTheDocument()
-    expect(screen.getByText('нет данных')).toBeInTheDocument()
+    expect(screen.getAllByText('0 шт.').length).toBeGreaterThanOrEqual(1)
     expect(screen.queryByText('Что исправлять в первую очередь')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /^(Новые|Сохраняются|Исправлены):/ })).not.toBeInTheDocument()
 
-    expect(await screen.findByText('Проблем не найдено')).toBeInTheDocument()
+    expect(await screen.findByText('В подразделении пока нет целей')).toBeInTheDocument()
+    expect(screen.queryByText('Проблем не найдено')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Сбросить фильтры' })).toBeDisabled()
   })
 })
+
 
 describe('KkdPage: неуспешный прогон (RUN-006)', () => {
   beforeEach(() => {

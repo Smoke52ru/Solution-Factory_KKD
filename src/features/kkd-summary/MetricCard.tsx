@@ -9,14 +9,12 @@ const VALUE_FONT_SIZE = 28
 interface MetricCardProps {
   metric: MetricRow
   comparedToId: string | null
-  /** В подразделении нет целей: вместо чисел показываем «—» и «нет данных». */
-  noData: boolean
 }
 
 /** Карточка метрики: значение, «было X», дельта с оценкой; формула — в подсказке. */
-export function MetricCard({ metric, comparedToId, noData }: MetricCardProps) {
+export function MetricCard({ metric, comparedToId }: MetricCardProps) {
   const { token } = theme.useToken()
-  const hasValue = !noData && metric.value !== null
+  const hasValue = metric.value !== null
 
   return (
     <Card

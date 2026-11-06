@@ -19,6 +19,8 @@ interface IssuesTableProps {
   isFetching: boolean
   error: unknown
   hasActiveFilters: boolean
+  /** В подразделении нет целей — нейтральное пустое состояние без зелёной галочки. */
+  noGoals?: boolean
   page: number
   pageSize: number
   onRetry: () => void
@@ -42,9 +44,14 @@ function objectTypeLabel(issue: Issue): string {
 
 function EmptyIssues({
   hasActiveFilters,
+  noGoals,
   onResetFilters,
-}: Pick<IssuesTableProps, 'hasActiveFilters' | 'onResetFilters'>) {
+}: Pick<IssuesTableProps, 'hasActiveFilters' | 'noGoals' | 'onResetFilters'>) {
   const { token } = theme.useToken()
+
+  if (noGoals) {
+    return <Empty description="В подразделении пока нет целей" />
+  }
 
   if (hasActiveFilters) {
     return (
@@ -76,6 +83,7 @@ export function IssuesTable({
   isFetching,
   error,
   hasActiveFilters,
+  noGoals = false,
   page,
   pageSize,
   onRetry,
@@ -165,7 +173,11 @@ export function IssuesTable({
       loading={isFetching}
       locale={{
         emptyText: (
-          <EmptyIssues hasActiveFilters={hasActiveFilters} onResetFilters={onResetFilters} />
+          <EmptyIssues
+            hasActiveFilters={hasActiveFilters}
+            noGoals={noGoals}
+            onResetFilters={onResetFilters}
+          />
         ),
       }}
       pagination={{

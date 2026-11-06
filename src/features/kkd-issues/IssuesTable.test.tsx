@@ -47,7 +47,16 @@ describe('IssuesTable: пустые состояния', () => {
     expect(screen.queryByText(/По выбранным фильтрам/)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Сбросить фильтры' })).not.toBeInTheDocument()
   })
+
+  it('нет целей: нейтральный Empty без зелёной галочки', () => {
+    renderTable({ noGoals: true })
+
+    expect(screen.getByText('В подразделении пока нет целей')).toBeInTheDocument()
+    expect(screen.queryByText('Проблем не найдено')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Сбросить фильтры' })).not.toBeInTheDocument()
+  })
 })
+
 
 describe('IssuesTable: данные, загрузка, ошибка', () => {
   it('показывает строки и открывает карточку по клику и по Enter', async () => {
