@@ -9,7 +9,7 @@
 Нужен только Docker.
 
 ```bash
-git clone https://gitverse.ru/Smoke52/Solution-Factory_KKD.git solution-factory-kkd
+git clone https://github.com/Smoke52ru/Solution-Factory_KKD.git solution-factory-kkd
 cd solution-factory-kkd
 docker compose up --build
 ```
