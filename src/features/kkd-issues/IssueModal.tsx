@@ -55,10 +55,11 @@ function IssueContent({ issue, runId }: { issue: IssueDetail; runId: string }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: token.margin }}>
+      <Typography.Text type="secondary">{issue.id}</Typography.Text>
+
       <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: token.marginXS }}>
         <SeverityTag severity={issue.severity} />
         <DeltaStatusTag status={issue.delta_status} />
-        <Typography.Text strong>{issue.rule_title}</Typography.Text>
       </div>
 
       <Typography.Paragraph style={{ margin: 0 }}>{issue.details}</Typography.Paragraph>
@@ -133,10 +134,12 @@ export function IssueModal({ issueId, runId, onClose }: IssueModalProps) {
     return <IssueContent issue={issue.data} runId={runId} />
   }
 
+  const title = issue.data?.rule_title ?? 'Карточка проблемы'
+
   return (
     <Modal
       open={issueId !== undefined}
-      title={issueId ? `Проблема ${issueId}` : 'Карточка проблемы'}
+      title={title}
       width={MODAL_WIDTH}
       footer={null}
       destroyOnHidden
