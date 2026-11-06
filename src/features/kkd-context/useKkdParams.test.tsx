@@ -41,7 +41,6 @@ describe('useKkdParams: чтение URL', () => {
     expect(kkd.page).toBe(1)
     expect(kkd.issueId).toBeUndefined()
     expect(kkd.filters).toEqual({ ruleCodes: [], severities: [], deltaStatus: undefined, q: '' })
-    expect(kkd.hasActiveFilters).toBe(false)
   })
 
   it('run не определён, пока список прогонов не загружен', () => {
@@ -64,7 +63,6 @@ describe('useKkdParams: чтение URL', () => {
     expect(kkd.filters.q).toBe(' foo ')
     expect(kkd.page).toBe(3)
     expect(kkd.issueId).toBe('ISS-1')
-    expect(kkd.hasActiveFilters).toBe(true)
   })
 
   it('явный run в URL важнее прогона по умолчанию', () => {
@@ -92,9 +90,6 @@ describe('useKkdParams: чтение URL', () => {
     expect(PAGE_SIZE).toBe(20)
   })
 
-  it('hasActiveFilters: пробельный q — не фильтр', () => {
-    expect(setup('/?q=%20%20').result.current.kkd.hasActiveFilters).toBe(false)
-  })
 })
 
 describe('useKkdParams: сброс страницы и закрытие модалки', () => {
@@ -182,7 +177,6 @@ describe('useKkdParams: сброс страницы и закрытие мода
     act(() => result.current.kkd.resetFilters())
 
     expect([...result.current.search.keys()].toSorted()).toEqual(['issue', 'run', 'unit'])
-    expect(result.current.kkd.hasActiveFilters).toBe(false)
   })
 })
 

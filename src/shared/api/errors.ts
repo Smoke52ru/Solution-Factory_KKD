@@ -80,15 +80,6 @@ export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
 }
 
-/** Прогон завершился с ошибкой — результатов нет (409 `RUN_FAILED`). */
-export function isRunFailed(error: unknown): error is ApiError {
-  return isApiError(error) && error.code === 'RUN_FAILED'
-}
-
-export function isRunInProgress(error: unknown): error is ApiError {
-  return isApiError(error) && error.code === 'RUN_IN_PROGRESS'
-}
-
 /** Нет ответа сервера: обрыв сети, таймаут, CORS. */
 export function isNetworkError(error: unknown): error is ApiError {
   return isApiError(error) && error.code === NETWORK_ERROR_CODE

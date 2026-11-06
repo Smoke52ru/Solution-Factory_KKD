@@ -91,12 +91,6 @@ export function useKkdParams() {
     }
   }, [searchParams])
 
-  const hasActiveFilters =
-    filters.ruleCodes.length > 0 ||
-    filters.severities.length > 0 ||
-    filters.deltaStatus !== undefined ||
-    filters.q.trim() !== ''
-
   const update = useCallback(
     (mutate: (next: URLSearchParams) => void, { replace = false }: UpdateOptions = {}) => {
       setSearchParams(
@@ -199,7 +193,6 @@ export function useKkdParams() {
     unitId,
     runId,
     filters,
-    hasActiveFilters,
     page,
     issueId,
     setUnit,

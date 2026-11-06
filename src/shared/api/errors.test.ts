@@ -11,8 +11,6 @@ import {
   isNetworkError,
   isNotFound,
   isRetryable,
-  isRunFailed,
-  isRunInProgress,
   toApiError,
 } from './errors'
 
@@ -40,7 +38,6 @@ describe('toApiError', () => {
     expect(error.code).toBe('RUN_FAILED')
     expect(error.status).toBe(409)
     expect(error.message).toBe('Прогон завершился ошибкой')
-    expect(isRunFailed(error)).toBe(true)
   })
 
   it('сетевая ошибка без ответа: NETWORK_ERROR, status = null', () => {
@@ -101,7 +98,6 @@ describe('toApiError', () => {
 
 describe('предикаты', () => {
   const runFailed = new ApiError('RUN_FAILED', '', 409)
-  const inProgress = new ApiError('RUN_IN_PROGRESS', '', 409)
   const notFound = new ApiError('ISSUE_NOT_FOUND', '', 404)
   const network = new ApiError(NETWORK_ERROR_CODE, '', null)
   const server = new ApiError(UNKNOWN_ERROR_CODE, '', 503)
@@ -110,14 +106,6 @@ describe('предикаты', () => {
     expect(isApiError(runFailed)).toBe(true)
     expect(isApiError(new Error('x'))).toBe(false)
     expect(isApiError(null)).toBe(false)
-  })
-
-  it('isRunFailed и isRunInProgress различают коды', () => {
-    expect(isRunFailed(runFailed)).toBe(true)
-    expect(isRunFailed(inProgress)).toBe(false)
-    expect(isRunInProgress(inProgress)).toBe(true)
-    expect(isRunInProgress(runFailed)).toBe(false)
-    expect(isRunFailed(new Error('RUN_FAILED'))).toBe(false)
   })
 
   it('isNotFound по статусу 404', () => {
