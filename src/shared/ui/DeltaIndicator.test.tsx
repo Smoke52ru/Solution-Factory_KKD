@@ -76,16 +76,23 @@ describe('DeltaIndicator', () => {
       expect(container.querySelector('.anticon-arrow-down')).toBeInTheDocument()
     })
 
-    it('same при delta = 0: значок «−», «без изменений», в aria-label нет оценки', () => {
+    it('same при delta = 0: нейтральное «без изменений» без иконки минуса', () => {
       const { container } = render(
-        <DeltaIndicator delta={0} previous={7} trend="same" unit="шт." />,
+        <DeltaIndicator delta={0} previous={7} trend="same" unit="шт." comparedToId="RUN-007" />,
       )
 
-      const indicator = screen.getByRole('img', { name: 'Не изменилось' })
+      const indicator = screen.getByRole('img', { name: 'Не изменилось относительно RUN-007' })
       expect(indicator).toHaveTextContent('без изменений')
-      expect(container.querySelector('.anticon-minus')).toBeInTheDocument()
+      expect(indicator).not.toHaveTextContent('0')
+      expect(container.querySelector('.anticon-minus')).not.toBeInTheDocument()
       expect(container.querySelector('.anticon-arrow-up')).not.toBeInTheDocument()
       expect(container.querySelector('.anticon-arrow-down')).not.toBeInTheDocument()
+    })
+
+    it('trend = null при delta = 0: тоже нейтральное «без изменений»', () => {
+      render(<DeltaIndicator delta={0} previous={3} trend={null} unit="шт." />)
+
+      expect(screen.getByRole('img', { name: 'Не изменилось' })).toHaveTextContent('без изменений')
     })
   })
 

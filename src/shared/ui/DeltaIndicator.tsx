@@ -1,4 +1,4 @@
-import { ArrowDownOutlined, ArrowUpOutlined, MinusOutlined } from '@ant-design/icons'
+import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import { theme } from 'antd'
 import type { CSSProperties, ReactNode } from 'react'
 import type { MetricUnit, Trend } from '@/shared/api/types'
@@ -67,8 +67,7 @@ function directionText(delta: number, absolute: string): string {
 
 function directionIcon(delta: number): ReactNode {
   if (delta > 0) return <ArrowUpOutlined aria-hidden />
-  if (delta < 0) return <ArrowDownOutlined aria-hidden />
-  return <MinusOutlined aria-hidden />
+  return <ArrowDownOutlined aria-hidden />
 }
 
 /**
@@ -95,6 +94,22 @@ export function DeltaIndicator({
     )
   }
 
+  const unchangedAria = comparedToId
+    ? `Не изменилось относительно ${comparedToId}`
+    : 'Не изменилось'
+
+  if (delta === 0) {
+    return (
+      <span
+        role="img"
+        aria-label={unchangedAria}
+        style={{ color: token.colorTextSecondary, fontSize, fontWeight: FONT_WEIGHT_REGULAR }}
+      >
+        без изменений
+      </span>
+    )
+  }
+
   const label = trend === null ? null : trendLabel(trend)
   const deltaText = formatDelta(delta, unit)
   const pctText = deltaPct === null || deltaPct === undefined ? null : formatDeltaPct(deltaPct)
@@ -103,7 +118,7 @@ export function DeltaIndicator({
   const ariaParts = [
     directionText(delta, absolute),
     comparedToId ? ` относительно ${comparedToId}` : '',
-    label !== null && delta !== 0 ? ` — ${label}` : '',
+    label !== null ? ` — ${label}` : '',
   ]
   const style: CSSProperties = {
     display: 'inline-flex',
