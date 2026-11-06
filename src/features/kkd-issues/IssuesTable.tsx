@@ -108,13 +108,13 @@ export function IssuesTable({
     {
       title: 'Важность',
       dataIndex: 'severity',
-      width: 160,
+      width: 140,
       render: (_, issue) => <SeverityTag severity={issue.severity} />,
     },
     {
       title: 'Правило',
       dataIndex: 'rule_title',
-      width: 240,
+      width: 200,
     },
     {
       title: 'Объект',
@@ -131,12 +131,12 @@ export function IssuesTable({
     {
       title: 'Подразделение',
       dataIndex: 'unit_name',
-      width: 200,
+      width: 160,
     },
     {
       title: 'Ответственный',
       key: 'owner',
-      width: 180,
+      width: 160,
       render: (_, issue) =>
         issue.owner === null ? (
           <Typography.Text type="secondary">Не назначен</Typography.Text>
@@ -147,13 +147,13 @@ export function IssuesTable({
     {
       title: 'Статус',
       dataIndex: 'delta_status',
-      width: 160,
+      width: 140,
       render: (_, issue) => <DeltaStatusTag status={issue.delta_status} />,
     },
     {
       title: 'Подряд',
       dataIndex: 'runs_in_row',
-      width: 120,
+      width: 100,
       render: (_, issue) => formatRunsInRow(issue.runs_in_row),
     },
   ]

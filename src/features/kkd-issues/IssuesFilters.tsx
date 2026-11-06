@@ -12,9 +12,9 @@ const SEARCH_FIELD_ID = 'kkd-filter-search'
 const STATUS_LABEL_ID = 'kkd-filter-status-label'
 const ALL_STATUSES = 'all'
 const SEARCH_DEBOUNCE_MS = 400
-const RULE_FIELD_WIDTH = 320
-const SEVERITY_FIELD_WIDTH = 240
-const SEARCH_FIELD_WIDTH = 280
+const RULE_FIELD_WIDTH = 260
+const SEVERITY_FIELD_WIDTH = 200
+const SEARCH_FIELD_WIDTH = 220
 
 type StatusOption = DeltaStatus | typeof ALL_STATUSES
 
